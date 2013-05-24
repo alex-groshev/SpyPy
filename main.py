@@ -4,11 +4,28 @@ import sys
 import datetime
 import urllib, urllib2
 import re
+import ConfigParser
 from BeautifulSoup import BeautifulSoup
 from pymongo import MongoClient
 
+def load_config():
+    config = ConfigParser.ConfigParser()
+    config.read('spypy.cfg')
+
+    # MongoDB settings
+    host = config.get('MongoDB', 'host')
+    port = config.getint('MongoDB', 'port')
+
+    return {
+        'host':host,
+        'port':port
+    }
+
 def help_args():
     print 'Please, specify domain(s)!'
+
+def help_config():
+    print 'Please, specify MongoDB host and port parameters in spypy.cfg!'
 
 def scrape(url):
     result = None
@@ -33,7 +50,14 @@ def main(domains):
         help_args()
         exit()
     
-    client = MongoClient('localhost', 27017)
+    # Loading configs
+    configs = load_config()
+
+    if not configs['host'] or not configs['port']:
+        help_config()
+        exit()
+
+    client = MongoClient(configs['host'], configs['port'])
     db = client.spypy
     collection = db.domains
 
@@ -54,8 +78,8 @@ def main(domains):
             keywords = keywords['content'].split(',')
             keywords = [keyword.strip() for keyword in keywords]
         else:
-            keywords = []       
-        
+            keywords = []
+
         doc = {
             'date': datetime.datetime.utcnow(),
             'domain': domain,
