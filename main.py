@@ -67,24 +67,26 @@ def main(domains):
         
         # Getting title
         title = soup.title.string
+        title = title.encode('utf-8')
 
         # Getting description meta tag
         description = soup.find('meta', {"name": "description"})
         description = description['content'] if description != None else ''
+        description = description.encode('utf-8')
         
         # Getting keywords meta tag
         keywords = soup.find('meta', {"name": "keywords"})
         if keywords != None:
             keywords = keywords['content'].split(',')
-            keywords = [keyword.strip() for keyword in keywords]
+            keywords = [keyword.strip().encode('utf-8') for keyword in keywords]
         else:
             keywords = []
 
         doc = {
             'date': datetime.datetime.utcnow(),
             'domain': domain,
-            'title': str(title),
-            'description': str(description),
+            'title': title,
+            'description': description,
             'keywords': keywords
         }
 
