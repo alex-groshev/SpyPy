@@ -4,6 +4,7 @@ import sys
 import datetime
 import urllib, urllib2
 import re
+import random
 import ConfigParser
 from BeautifulSoup import BeautifulSoup
 from pymongo import MongoClient
@@ -27,9 +28,15 @@ def help_args():
 def help_config():
     print 'Please, specify MongoDB host and port parameters in spypy.cfg!'
 
+def load_user_agents():
+    return [line.strip() for line in open('useragents.txt')]
+
+def get_random_item(list):
+    return random.choice(list)
+
 def scrape(url):
     result = None
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:21.0) Gecko/20100101 Firefox/21.0'}
+    headers = {'User-Agent': get_random_item(load_user_agents())}
     request = urllib2.Request(url, None, headers)
 
     try:
