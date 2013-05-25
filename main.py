@@ -87,13 +87,19 @@ def main(domains):
         m = regex.search(content)
         google_analytics = m.group(1) if m else ''
 
+        # Getting Google AdSense code
+        regex = re.compile('<script[^>]*?>.*google_ad_client\s*=\s*"((ca-)?pub-\d+)".*</script>', re.S+re.I)
+        m = regex.search(content)
+        google_adsense = m.group(1) if m else ''
+
         doc = {
             'date': datetime.datetime.utcnow(),
             'domain': domain,
             'title': title,
             'description': description,
             'keywords': keywords,
-            'analytics': google_analytics
+            'analytics': google_analytics,
+            'adsense': google_adsense
         }
 
         print "Inserting domain %s" % (domain)
