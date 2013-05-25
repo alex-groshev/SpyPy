@@ -82,12 +82,18 @@ def main(domains):
         else:
             keywords = []
 
+        # Getting Google Analytics code
+        regex = re.compile('<script[^>]*?>.*(UA-\d+-\d).*</script>', re.S+re.I)
+        m = regex.search(content)
+        google_analytics = m.group(1) if m else ''
+
         doc = {
             'date': datetime.datetime.utcnow(),
             'domain': domain,
             'title': title,
             'description': description,
-            'keywords': keywords
+            'keywords': keywords,
+            'analytics': google_analytics
         }
 
         print "Inserting domain %s" % (domain)
