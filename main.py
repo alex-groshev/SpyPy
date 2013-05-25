@@ -9,9 +9,9 @@ import ConfigParser
 from BeautifulSoup import BeautifulSoup
 from pymongo import MongoClient
 
-def load_config():
+def load_config(file):
     config = ConfigParser.ConfigParser()
-    config.read('spypy.cfg')
+    config.read(file)
 
     # MongoDB settings
     host = config.get('MongoDB', 'host')
@@ -34,15 +34,20 @@ def help_args():
 def help_config():
     print 'Please, specify MongoDB and Regex parameters in spypy.cfg!'
 
-def load_user_agents():
-    return [line.strip() for line in open('useragents.txt')]
+def get_file_contents(file):
+    try:
+        with open(file) as f:
+            return [line.strip() for line in f]
+    except EnvironmentError as err:
+        print "Unable to open file: {}".format(err)
+        sys.exit(1)
 
 def get_random_item(list):
     return random.choice(list)
 
-def scrape(url):
+def scrape(url, user_agent):
     result = None
-    headers = {'User-Agent': get_random_item(load_user_agents())}
+    headers = {'User-Agent': user_agent}
     request = urllib2.Request(url, None, headers)
 
     try:
@@ -64,7 +69,7 @@ def main(domains):
         exit()
     
     # Loading configs
-    configs = load_config()
+    configs = load_config('spypy.cfg')
 
     if not configs['host'] or not configs['port'] or not configs['google_analytics'] or not configs['google_adsense']:
         help_config()
@@ -74,8 +79,11 @@ def main(domains):
     db = client.spypy
     collection = db.domains
 
+    # Loading user agents from text file
+    user_agents = get_file_contents('useragents.txt')
+
     for domain in domains:
-        content = scrape('http://' + domain)
+        content = scrape('http://' + domain, get_random_item(user_agents))
         soup = BeautifulSoup(content)
         
         # Getting title
