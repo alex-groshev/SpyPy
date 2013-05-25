@@ -17,16 +17,22 @@ def load_config():
     host = config.get('MongoDB', 'host')
     port = config.getint('MongoDB', 'port')
 
+    # Regex settings
+    google_analytics = config.get('Regex', 'google_analytics')
+    google_adsense = config.get('Regex', 'google_adsense')
+
     return {
-        'host':host,
-        'port':port
+        'host': host,
+        'port': port,
+        'google_analytics': google_analytics,
+        'google_adsense': google_adsense
     }
 
 def help_args():
     print 'Please, specify domain(s)!'
 
 def help_config():
-    print 'Please, specify MongoDB host and port parameters in spypy.cfg!'
+    print 'Please, specify MongoDB and Regex parameters in spypy.cfg!'
 
 def load_user_agents():
     return [line.strip() for line in open('useragents.txt')]
@@ -60,7 +66,7 @@ def main(domains):
     # Loading configs
     configs = load_config()
 
-    if not configs['host'] or not configs['port']:
+    if not configs['host'] or not configs['port'] or not configs['google_analytics'] or not configs['google_adsense']:
         help_config()
         exit()
 
@@ -90,12 +96,12 @@ def main(domains):
             keywords = []
 
         # Getting Google Analytics code
-        regex = re.compile('<script[^>]*?>.*(UA-\d+-\d).*</script>', re.S+re.I)
+        regex = re.compile(configs['google_analytics'], re.S+re.I)
         m = regex.search(content)
         google_analytics = m.group(1) if m else ''
 
         # Getting Google AdSense code
-        regex = re.compile('<script[^>]*?>.*google_ad_client\s*=\s*"((ca-)?pub-\d+)".*</script>', re.S+re.I)
+        regex = re.compile(configs['google_adsense'], re.S+re.I)
         m = regex.search(content)
         google_adsense = m.group(1) if m else ''
 
