@@ -30,11 +30,13 @@ def load_config(file):
         'google_adsense': google_adsense
     }
 
-def help_args():
-    print 'Please, specify URL(s)!'
-
-def help_config():
-    print 'Please, specify MongoDB and Regex parameters in spypy.cfg!'
+def help(option):
+    if option == 1:
+        print 'Please, specify URL(s)!'
+    elif option == 2:
+        print 'Please, specify MongoDB and Regex parameters in spypy.cfg!'
+    else:
+        print 'Undefined help option!'
 
 def get_file_contents(file):
     try:
@@ -66,14 +68,14 @@ def scrape(url, user_agent):
 
 def main(urls):
     if len(urls) < 1:
-        help_args()
+        help(1)
         exit()
     
     # Loading configs
     configs = load_config('spypy.cfg')
 
     if not configs['host'] or not configs['port'] or not configs['google_analytics'] or not configs['google_adsense']:
-        help_config()
+        help(2)
         exit()
 
     client = MongoClient(configs['host'], configs['port'])
