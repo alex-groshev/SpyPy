@@ -3,6 +3,7 @@
 import sys
 import re
 import random
+import socket
 from datetime import datetime
 from urllib2 import Request, urlopen, URLError, HTTPError
 from ConfigParser import ConfigParser
@@ -86,7 +87,7 @@ def main(urls):
         url = 'http://' + url if not url.startswith('http://') else url
         content = scrape(url, get_random_item(user_agents))
         soup = BeautifulSoup(content)
-        
+
         # Getting title
         title = soup.title.string
         title = title.encode('utf-8')
@@ -118,9 +119,13 @@ def main(urls):
         u = urlparse(url)
         domain = u.netloc
 
+        # Getting IP address
+        ip = socket.gethostbyname(domain)
+
         doc = {
             'date': datetime.utcnow(),
             'domain': domain,
+            'ip': ip,
             'url': url,
             'title': title,
             'description': description,
