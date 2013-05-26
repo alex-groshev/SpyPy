@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 
 import sys
-import datetime
-import urllib, urllib2
 import re
 import random
-import ConfigParser
+from datetime import datetime
+from urllib2 import Request, urlopen, URLError, HTTPError
+from ConfigParser import ConfigParser
 from BeautifulSoup import BeautifulSoup
 from pymongo import MongoClient
 
 def load_config(file):
-    config = ConfigParser.ConfigParser()
+    config = ConfigParser()
     config.read(file)
 
     # MongoDB settings
@@ -48,10 +48,10 @@ def get_random_item(list):
 def scrape(url, user_agent):
     result = None
     headers = {'User-Agent': user_agent}
-    request = urllib2.Request(url, None, headers)
+    request = Request(url, None, headers)
 
     try:
-        urlfile = urllib2.urlopen(request)
+        urlfile = urlopen(request)
     except HTTPError, e:
         print e.code
     except URLError, e:
@@ -114,7 +114,7 @@ def main(domains):
         google_adsense = m.group(1) if m else ''
 
         doc = {
-            'date': datetime.datetime.utcnow(),
+            'date': datetime.utcnow(),
             'domain': domain,
             'title': title,
             'description': description,
