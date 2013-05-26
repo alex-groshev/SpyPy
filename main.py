@@ -8,6 +8,7 @@ from urllib2 import Request, urlopen, URLError, HTTPError
 from ConfigParser import ConfigParser
 from BeautifulSoup import BeautifulSoup
 from pymongo import MongoClient
+from urlparse import urlparse
 
 def load_config(file):
     config = ConfigParser()
@@ -29,7 +30,7 @@ def load_config(file):
     }
 
 def help_args():
-    print 'Please, specify domain(s)!'
+    print 'Please, specify URL(s)!'
 
 def help_config():
     print 'Please, specify MongoDB and Regex parameters in spypy.cfg!'
@@ -62,9 +63,8 @@ def scrape(url, user_agent):
 
     return result
 
-
-def main(domains):
-    if len(domains) < 1:
+def main(urls):
+    if len(urls) < 1:
         help_args()
         exit()
     
@@ -82,8 +82,9 @@ def main(domains):
     # Loading user agents from text file
     user_agents = get_file_contents('useragents.txt')
 
-    for domain in domains:
-        content = scrape('http://' + domain, get_random_item(user_agents))
+    for url in urls:
+        url = 'http://' + url if not url.startswith('http://') else url
+        content = scrape(url, get_random_item(user_agents))
         soup = BeautifulSoup(content)
         
         # Getting title
@@ -113,9 +114,14 @@ def main(domains):
         m = regex.search(content)
         google_adsense = m.group(1) if m else ''
 
+        # Getting domain name from URL
+        u = urlparse(url)
+        domain = u.netloc
+
         doc = {
             'date': datetime.utcnow(),
             'domain': domain,
+            'url': url,
             'title': title,
             'description': description,
             'keywords': keywords,
@@ -123,7 +129,7 @@ def main(domains):
             'adsense': google_adsense
         }
 
-        print "Inserting domain %s" % (domain)
+        print "Saving %s" % (domain)
 
         collection.insert(doc)
 
