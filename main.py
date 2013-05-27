@@ -133,7 +133,8 @@ def main(urls):
             'description': description,
             'keywords': keywords,
             'analytics': google_analytics,
-            'adsense': google_adsense
+            'adsense': google_adsense,
+            'processed': 1
         }
 
         print "Saving %s" % (domain)
