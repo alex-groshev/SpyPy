@@ -5,20 +5,13 @@ import re
 import random
 import socket
 from spypyconfig import SpyPyConfig
+from spypyio import SpyPyIo
 from datetime import datetime
 from urllib2 import Request, urlopen, URLError, HTTPError
 from BeautifulSoup import BeautifulSoup
 from pymongo import MongoClient
 from urlparse import urlparse
 
-
-def get_file_contents(file):
-    try:
-        with open(file) as f:
-            return [line.strip() for line in f]
-    except EnvironmentError as err:
-        print "Unable to open file: {}".format(err)
-        sys.exit(1)
 
 def get_random_item(list):
     return random.choice(list)
@@ -43,7 +36,7 @@ def scrape(url, user_agent):
 def main(urls):
     if len(urls) < 1:
         print 'Please, specify URL(s)!'
-        exit()
+        sys.exit(1)
     
     # Loading configs
     spypyconfig = SpyPyConfig()
@@ -54,7 +47,8 @@ def main(urls):
     collection = db.domains
 
     # Loading user agents from text file
-    user_agents = get_file_contents('useragents.txt')
+    spypyio = SpyPyIo()
+    user_agents = spypyio.get_file_contents('useragents.txt')
 
     for url in urls:
         url = 'http://' + url if not url.startswith('http://') else url
