@@ -1,3 +1,4 @@
+import sys
 from ConfigParser import ConfigParser
 
 class SpyPyConfig:
@@ -13,6 +14,10 @@ class SpyPyConfig:
         # Regex settings
         google_analytics = config.get('Regex', 'google_analytics')
         google_adsense = config.get('Regex', 'google_adsense')
+
+        if not host or not port or not google_analytics or not google_adsense:
+            print 'Please, specify all MongoDB and Regex parameters in %s!' % file
+            sys.exit(1)
 
         return {
             'host': host,

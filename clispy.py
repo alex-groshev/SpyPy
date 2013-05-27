@@ -15,8 +15,6 @@ from urlparse import urlparse
 def help(option):
     if option == 1:
         print 'Please, specify URL(s)!'
-    elif option == 2:
-        print 'Please, specify MongoDB and Regex parameters in spypy.cfg!'
     else:
         print 'Undefined help option!'
 
@@ -56,10 +54,6 @@ def main(urls):
     # Loading configs
     spypyconfig = SpyPyConfig()
     configs = spypyconfig.load('spypy.cfg')
-
-    if not configs['host'] or not configs['port'] or not configs['google_analytics'] or not configs['google_adsense']:
-        help(2)
-        exit()
 
     client = MongoClient(configs['host'], configs['port'])
     db = client.spypy
