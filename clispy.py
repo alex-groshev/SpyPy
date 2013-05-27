@@ -48,7 +48,7 @@ def main(urls):
 
     # Loading user agents from text file
     spypyio = SpyPyIo()
-    user_agents = spypyio.get_file_contents('useragents.txt')
+    user_agents = spypyio.file_get_contents('useragents.txt')
 
     for url in urls:
         url = 'http://' + url if not url.startswith('http://') else url

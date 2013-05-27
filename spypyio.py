@@ -2,7 +2,7 @@ import sys
 
 class SpyPyIo:
 
-    def get_file_contents(self, file):
+    def file_get_contents(self, file):
         try:
             with open(file) as f:
                 return [line.strip() for line in f]
