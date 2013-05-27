@@ -12,12 +12,6 @@ from pymongo import MongoClient
 from urlparse import urlparse
 
 
-def help(option):
-    if option == 1:
-        print 'Please, specify URL(s)!'
-    else:
-        print 'Undefined help option!'
-
 def get_file_contents(file):
     try:
         with open(file) as f:
@@ -48,7 +42,7 @@ def scrape(url, user_agent):
 
 def main(urls):
     if len(urls) < 1:
-        help(1)
+        print 'Please, specify URL(s)!'
         exit()
     
     # Loading configs
