@@ -4,31 +4,13 @@ import sys
 import re
 import random
 import socket
+from spypyconfig import SpyPyConfig
 from datetime import datetime
 from urllib2 import Request, urlopen, URLError, HTTPError
-from ConfigParser import ConfigParser
 from BeautifulSoup import BeautifulSoup
 from pymongo import MongoClient
 from urlparse import urlparse
 
-def load_config(file):
-    config = ConfigParser()
-    config.read(file)
-
-    # MongoDB settings
-    host = config.get('MongoDB', 'host')
-    port = config.getint('MongoDB', 'port')
-
-    # Regex settings
-    google_analytics = config.get('Regex', 'google_analytics')
-    google_adsense = config.get('Regex', 'google_adsense')
-
-    return {
-        'host': host,
-        'port': port,
-        'google_analytics': google_analytics,
-        'google_adsense': google_adsense
-    }
 
 def help(option):
     if option == 1:
@@ -72,7 +54,8 @@ def main(urls):
         exit()
     
     # Loading configs
-    configs = load_config('spypy.cfg')
+    spypyconfig = SpyPyConfig()
+    configs = spypyconfig.load('spypy.cfg')
 
     if not configs['host'] or not configs['port'] or not configs['google_analytics'] or not configs['google_adsense']:
         help(2)
