@@ -9,7 +9,7 @@ from pymongo import MongoClient
 
 def main():
     if len(sys.argv) < 2:
-        print ''
+        print 'Please, specify text file!'
         sys.exit(1)
 
     # Loading domains from text file
