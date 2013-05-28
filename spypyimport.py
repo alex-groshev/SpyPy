@@ -38,9 +38,13 @@ def main():
             'processed': 0
         }
 
-        print "Importing %s" % (domain)
+        print 'Inserting domain: %s' % domain
 
-        collection.insert(doc)
+        try:
+            collection.insert(doc)
+        except:
+            print 'Error inserting domain: %s' % domain
+            print 'Unexpected error:', sys.exc_info()[0], sys.exc_info()[1]
 
     print 'Done'
 
