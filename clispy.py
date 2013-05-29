@@ -5,9 +5,9 @@ import re
 import random
 import socket
 from spypyconfig import SpyPyConfig
+from spypynet import SpyPyNet
 from spypyio import SpyPyIo
 from datetime import datetime
-from urllib2 import Request, urlopen, URLError, HTTPError
 from BeautifulSoup import BeautifulSoup
 from pymongo import MongoClient
 from urlparse import urlparse
@@ -15,23 +15,6 @@ from urlparse import urlparse
 
 def get_random_item(list):
     return random.choice(list)
-
-def scrape(url, user_agent):
-    result = None
-    headers = {'User-Agent': user_agent}
-    request = Request(url, None, headers)
-
-    try:
-        urlfile = urlopen(request)
-    except HTTPError, e:
-        print e.code
-    except URLError, e:
-        print e.reason
-    else:
-        result = urlfile.read()
-        urlfile.close()
-
-    return result
 
 def main(urls):
     if len(urls) < 1:
@@ -50,9 +33,11 @@ def main(urls):
     spypyio = SpyPyIo()
     user_agents = spypyio.file_get_contents('useragents.txt')
 
+    spypynet = SpyPyNet()
+
     for url in urls:
         url = 'http://' + url if not url.startswith('http://') else url
-        content = scrape(url, get_random_item(user_agents))
+        content = spypynet.scrape(url, get_random_item(user_agents))
         soup = BeautifulSoup(content)
 
         # Getting title
