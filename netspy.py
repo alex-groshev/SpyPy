@@ -1,6 +1,6 @@
 from urllib2 import Request, urlopen, URLError, HTTPError
 
-class SpyPyNet:
+class NetSpyPy:
 
     def scrape(self, url, user_agent):
         result = None

@@ -4,13 +4,13 @@ import sys
 import re
 import random
 import socket
-from spypyconfig import SpyPyConfig
-from spypynet import SpyPyNet
-from spypyio import SpyPyIo
-from datetime import datetime
 from BeautifulSoup import BeautifulSoup
+from datetime import datetime
 from pymongo import MongoClient
 from urlparse import urlparse
+from confspy import ConfSpyPy
+from iospy import IoSpyPy
+from netspy import NetSpyPy
 
 
 def get_random_item(list):
@@ -22,22 +22,22 @@ def main(urls):
         sys.exit(1)
     
     # Loading configs
-    spypyconfig = SpyPyConfig()
-    configs = spypyconfig.load('spypy.cfg')
+    confspypy = ConfSpyPy()
+    configs = confspypy.load('spypy.cfg')
 
     client = MongoClient(configs['host'], configs['port'])
     db = client.spypy
     collection = db.domains
 
     # Loading user agents from text file
-    spypyio = SpyPyIo()
-    user_agents = spypyio.file_get_contents('useragents.txt')
+    iospypy = IoSpyPy()
+    user_agents = iospypy.file_get_contents('useragents.txt')
 
-    spypynet = SpyPyNet()
+    netspypy = NetSpyPy()
 
     for url in urls:
         url = 'http://' + url if not url.startswith('http://') else url
-        content = spypynet.scrape(url, get_random_item(user_agents))
+        content = netspypy.scrape(url, get_random_item(user_agents))
         soup = BeautifulSoup(content)
 
         # Getting title

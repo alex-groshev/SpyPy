@@ -1,7 +1,7 @@
 import sys
 from ConfigParser import ConfigParser
 
-class SpyPyConfig:
+class ConfSpyPy:
 
     def load(self, file):
         config = ConfigParser()

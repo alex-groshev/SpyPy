@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 import sys
-from spypyconfig import SpyPyConfig
-from spypyio import SpyPyIo
 from datetime import datetime
 from pymongo import MongoClient
+from confspy import ConfSpyPy
+from iospy import IoSpyPy
 
 
 def main():
@@ -13,12 +13,12 @@ def main():
         sys.exit(1)
 
     # Loading domains from text file
-    spypyio = SpyPyIo()
-    domains = spypyio.file_get_contents(sys.argv[1])
+    iospypy = IoSpyPy()
+    domains = iospypy.file_get_contents(sys.argv[1])
 
     # Loading configs
-    spypyconfig = SpyPyConfig()
-    configs = spypyconfig.load('spypy.cfg')
+    confspypy = ConfSpyPy()
+    configs = confspypy.load('spypy.cfg')
 
     client = MongoClient(configs['host'], configs['port'])
     db = client.spypy

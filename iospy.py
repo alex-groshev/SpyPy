@@ -1,6 +1,6 @@
 import sys
 
-class SpyPyIo:
+class IoSpyPy:
 
     def file_get_contents(self, file):
         try:
