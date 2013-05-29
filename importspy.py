@@ -4,6 +4,7 @@ import sys
 from datetime import datetime
 from pymongo import MongoClient
 from confspy import ConfSpyPy
+from dataspy import DataSpyPy
 from iospy import IoSpyPy
 
 
@@ -12,17 +13,13 @@ def main():
         print 'Please, specify text file!'
         sys.exit(1)
 
-    # Loading domains from text file
     iospypy = IoSpyPy()
     domains = iospypy.file_get_contents(sys.argv[1])
 
-    # Loading configs
     confspypy = ConfSpyPy()
     configs = confspypy.load('spypy.cfg')
 
-    client = MongoClient(configs['host'], configs['port'])
-    db = client.spypy
-    collection = db.domains
+    dataspypy = DataSpyPy(configs['host'], configs['port'])
 
     for domain in domains:
         doc = {
@@ -40,11 +37,7 @@ def main():
 
         print 'Inserting domain: %s' % domain
 
-        try:
-            collection.insert(doc)
-        except:
-            print 'Error inserting domain: %s' % domain
-            print 'Unexpected error:', sys.exc_info()[0], sys.exc_info()[1]
+        dataspypy.insert_record(doc)
 
     print 'Done'
 
