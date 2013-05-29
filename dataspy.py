@@ -1,4 +1,5 @@
 import sys
+from datetime import datetime
 from pymongo import MongoClient
 
 class DataSpyPy:
@@ -9,6 +10,9 @@ class DataSpyPy:
         self.collection = db.domains
 
     def insert_record(self, doc):
+        if not 'date' in doc.keys():
+            doc['date'] = datetime.utcnow()
+
         try:
             self.collection.insert(doc)
         except:

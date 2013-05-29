@@ -3,7 +3,6 @@ import re
 import random
 import socket
 from BeautifulSoup import BeautifulSoup
-from datetime import datetime
 from urlparse import urlparse
 from iospy import IoSpyPy
 from netspy import NetSpyPy
@@ -69,7 +68,6 @@ class ProcSpyPy:
             ip = socket.gethostbyname(domain)
 
             doc = {
-                'date': datetime.utcnow(),
                 'domain': domain,
                 'ip': ip,
                 'url': url,
