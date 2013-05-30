@@ -1,5 +1,4 @@
 import sys
-from datetime import datetime
 from pymongo import MongoClient
 
 class DataSpyPy:
@@ -10,10 +9,22 @@ class DataSpyPy:
         self.collection = db.domains
 
     def insert_record(self, doc):
-        if not 'date' in doc.keys():
-            doc['date'] = datetime.utcnow()
-
         try:
             self.collection.insert(doc)
         except:
             print 'Unexpected error:', sys.exc_info()[0], sys.exc_info()[1]
+
+    def update_record(self, spec, doc):
+        try:
+            self.collection.update(spec, doc)
+        except:
+            print 'Unexpected error:', sys.exc_info()[0], sys.exc_info()[1]
+
+    def get_unprocessed_records(self, limit):
+        query = {'processed': 0}
+        show = {'_id':1, 'domain': 1}
+
+        try:
+            return list(self.collection.find(query, show).limit(limit))
+        except:
+            print 'Unexpected error:', sys.exc_info()[0], sys.exc_info()[1]        

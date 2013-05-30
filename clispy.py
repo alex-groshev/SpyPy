@@ -13,7 +13,7 @@ def main(urls):
     dataspypy = DataSpyPy(configs['host'], configs['port'])
 
     procspypy = ProcSpyPy(dataspypy, configs['google_analytics'], configs['google_adsense'])
-    procspypy.process(urls)
+    procspypy.process_urls(urls)
 
 if __name__=='__main__':
     main(sys.argv[1:])

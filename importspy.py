@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+from datetime import datetime
 from pymongo import MongoClient
 from confspy import ConfSpyPy
 from dataspy import DataSpyPy
@@ -22,6 +23,7 @@ def main():
 
     for domain in domains:
         doc = {
+            'date': datetime.utcnow(),
             'domain': domain,
             'ip': '',
             'url': '',
