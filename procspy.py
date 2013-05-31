@@ -36,8 +36,9 @@ class ProcSpyPy:
         soup = BeautifulSoup(content)
 
         # Getting title
-        title = soup.title.string
-        title = title.encode('utf-8')
+        title = ''
+        if soup.title.string:
+            title = soup.title.string.encode('utf-8')
 
         # Getting description meta tag
         description = soup.find('meta', {"name": "description"})
