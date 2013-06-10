@@ -33,11 +33,15 @@ class ProcSpyPy:
     def process(self, url):
         url = self.prepare_url(url)
         content = self.get_content(url)
+
+        if not content:
+            return None
+
         soup = BeautifulSoup(content)
 
         # Getting title
         title = ''
-        if soup.title.string:
+        if soup.title and soup.title.string:
             title = soup.title.string.encode('utf-8')
 
         # Getting description meta tag
@@ -93,7 +97,15 @@ class ProcSpyPy:
         for url in urls:
             doc = self.process(url)
 
-            print 'Inserting record: %s' % doc['domain']
+            if not doc:
+                doc = {
+                    'date': datetime.utcnow(),
+                    'url': url,
+                    'processed': 1,
+                    'error': 1
+                }
+
+            print 'Inserting record: %s' % doc['url']
 
             self.dataspypy.insert_record(doc)
 
@@ -105,25 +117,37 @@ class ProcSpyPy:
             sys.exit(1)
 
         for record in records:
+            if 'domain' not in record:
+                continue
+
             doc = self.process(record['domain'])
 
-            rec = {
-                '$set' : {
-                    'date': datetime.utcnow(),
-                    'ip': doc['ip'],
-                    'url': doc['url'],
-                    'title': doc['title'].encode('utf-8'),
-                    'description': doc['description'].encode('utf-8'),
-                    'keywords': doc['keywords'],
-                    'analytics': doc['analytics'],
-                    'adsense': doc['adsense'],
-                    'processed': 1
+            if not doc:
+                rec = {
+                    '$set': {
+                        'date': datetime.utcnow(),
+                        'domain': record['domain'],
+                        'processed': 1,
+                        'error': 1
+                    }
                 }
-            }
+            else:
+                rec = {
+                    '$set': {
+                        'date': datetime.utcnow(),
+                        'ip': doc['ip'],
+                        'url': doc['url'],
+                        'title': doc['title'],
+                        'description': doc['description'],
+                        'keywords': doc['keywords'],
+                        'analytics': doc['analytics'],
+                        'adsense': doc['adsense'],
+                        'processed': 1
+                    }
+                }
 
             print 'Updating record: %s' % record['_id']
 
             self.dataspypy.update_record({'_id': record['_id']}, rec)
 
         print 'Done'
-

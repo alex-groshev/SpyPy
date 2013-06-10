@@ -22,7 +22,7 @@ class DataSpyPy:
 
     def get_unprocessed_records(self, limit):
         query = {'processed': 0}
-        show = {'_id':1, 'domain': 1}
+        show = {'_id': 1, 'domain': 1}
 
         try:
             return list(self.collection.find(query, show).limit(limit))
