@@ -51,7 +51,7 @@ class ProcSpyPy:
         
         # Getting keywords meta tag
         keywords = soup.find('meta', {"name": "keywords"})
-        if keywords != None:
+        if keywords != None and 'content' in keywords:
             keywords = keywords['content'].split(',')
             keywords = [keyword.strip().encode('utf-8') for keyword in keywords]
         else:
