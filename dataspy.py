@@ -21,7 +21,7 @@ class DataSpyPy:
             print 'Unexpected error:', sys.exc_info()[0], sys.exc_info()[1]
 
     def get_unprocessed_records(self, limit):
-        query = {'processed': 0}
+        query = {'processed': 0, 'error': 0}
         show = {'_id': 1, 'domain': 1}
 
         try:
