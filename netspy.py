@@ -1,5 +1,5 @@
 from urllib2 import Request, urlopen, URLError, HTTPError
-from httplib import IncompleteRead
+from httplib import BadStatusLine, IncompleteRead
 
 class NetSpyPy:
 
@@ -16,6 +16,8 @@ class NetSpyPy:
             print e.code
         except URLError, e:
             print e.reason
+        except BadStatusLine, e:
+            print e
         except IncompleteRead, e:
             print e
 
