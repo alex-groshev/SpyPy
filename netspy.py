@@ -1,4 +1,5 @@
 from urllib2 import Request, urlopen, URLError, HTTPError
+from httplib import IncompleteRead
 
 class NetSpyPy:
 
@@ -9,12 +10,13 @@ class NetSpyPy:
 
         try:
             urlfile = urlopen(request)
+            result = urlfile.read()
+            urlfile.close()
         except HTTPError, e:
             print e.code
         except URLError, e:
             print e.reason
-        else:
-            result = urlfile.read()
-            urlfile.close()
+        except IncompleteRead, e:
+            print e
 
         return result
