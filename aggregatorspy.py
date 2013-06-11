@@ -7,11 +7,15 @@ from procspy import ProcSpyPy
 
 
 def main():
+    if len(sys.argv) < 2:
+        print 'Please, specify a number of records to process!'
+        sys.exit(1)
+    
     confspypy = ConfSpyPy()
     configs = confspypy.load('spypy.cfg')
 
     dataspypy = DataSpyPy(configs['host'], configs['port'])
-    records = dataspypy.get_unprocessed_records(10)
+    records = dataspypy.get_unprocessed_records(int(sys.argv[1]))
 
     procspypy = ProcSpyPy(dataspypy, configs['google_analytics'], configs['google_adsense'])
     procspypy.process_records(records)
