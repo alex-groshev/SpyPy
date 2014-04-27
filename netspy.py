@@ -21,5 +21,7 @@ class NetSpyPy:
             print e
         except IncompleteRead, e:
             print e
+        except IOError, e:
+            print e
 
         return result
