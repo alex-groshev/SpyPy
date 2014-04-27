@@ -2,7 +2,6 @@
 
 import sys
 from datetime import datetime
-from pymongo import MongoClient
 from confspy import ConfSpyPy
 from dataspy import DataSpyPy
 from iospy import IoSpyPy
@@ -13,12 +12,8 @@ def main():
         print 'Please, specify text file!'
         sys.exit(1)
 
-    iospypy = IoSpyPy()
-    domains = iospypy.file_get_contents(sys.argv[1])
-
-    confspypy = ConfSpyPy()
-    configs = confspypy.load('spypy.cfg')
-
+    domains = IoSpyPy.file_get_contents(sys.argv[1])
+    configs = ConfSpyPy.load('spypy.cfg')
     dataspypy = DataSpyPy(configs['host'], configs['port'])
 
     for domain in domains:
@@ -41,5 +36,5 @@ def main():
 
     print 'Done'
 
-if __name__=='__main__':
+if __name__ == '__main__':
     main()

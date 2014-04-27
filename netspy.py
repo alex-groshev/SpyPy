@@ -3,7 +3,8 @@ from httplib import BadStatusLine, IncompleteRead
 
 class NetSpyPy:
 
-    def scrape(self, url, user_agent):
+    @staticmethod
+    def scrape(url, user_agent):
         result = None
         headers = {'User-Agent': user_agent}
         request = Request(url, None, headers)

@@ -15,11 +15,7 @@ class ProcSpyPy:
         self.dataspypy = dataspypy
         self.google_analytics = google_analytics
         self.google_adsense = google_adsense
-
-        iospypy = IoSpyPy()
-        self.user_agents = iospypy.file_get_contents('useragents.txt')
-
-        self.netspypy = NetSpyPy()
+        self.user_agents = IoSpyPy.file_get_contents('useragents.txt')
 
     def get_random_item(self, list):
         return random.choice(list)
@@ -28,7 +24,7 @@ class ProcSpyPy:
         return 'http://' + url if not url.startswith('http://') else url
 
     def get_content(self, url):
-        return self.netspypy.scrape(url, self.get_random_item(self.user_agents))
+        return NetSpyPy.scrape(url, self.get_random_item(self.user_agents))
 
     def process(self, url):
         url = self.prepare_url(url)
@@ -46,12 +42,12 @@ class ProcSpyPy:
 
         # Getting description meta tag
         description = soup.find('meta', {"name": "description"})
-        description = description['content'] if description != None and 'content' in description else ''
+        description = description['content'] if description is not None and description['content'] is not None else ''
         description = description.encode('utf-8')
         
         # Getting keywords meta tag
         keywords = soup.find('meta', {"name": "keywords"})
-        if keywords != None and 'content' in keywords:
+        if keywords is not None and keywords['content'] is not None:
             keywords = keywords['content'].split(',')
             keywords = [keyword.strip().encode('utf-8') for keyword in keywords]
         else:
@@ -146,7 +142,7 @@ class ProcSpyPy:
                     }
                 }
 
-            print 'Updating record: %s' % record['_id']
+            print 'Updating record: %s - %s' % (record['_id'], record['domain'])
 
             self.dataspypy.update_record({'_id': record['_id']}, rec)
 

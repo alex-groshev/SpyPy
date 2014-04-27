@@ -3,7 +3,8 @@ from ConfigParser import ConfigParser
 
 class ConfSpyPy:
 
-    def load(self, file):
+    @staticmethod
+    def load(file):
         config = ConfigParser()
         config.read(file)
 

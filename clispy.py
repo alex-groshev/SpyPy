@@ -7,13 +7,12 @@ from procspy import ProcSpyPy
 
 
 def main(urls):
-    confspypy = ConfSpyPy()
-    configs = confspypy.load('spypy.cfg')
+    configs = ConfSpyPy.load('spypy.cfg')
 
     dataspypy = DataSpyPy(configs['host'], configs['port'])
 
     procspypy = ProcSpyPy(dataspypy, configs['google_analytics'], configs['google_adsense'])
     procspypy.process_urls(urls)
 
-if __name__=='__main__':
+if __name__ == '__main__':
     main(sys.argv[1:])

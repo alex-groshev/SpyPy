@@ -2,7 +2,8 @@ import sys
 
 class IoSpyPy:
 
-    def file_get_contents(self, file):
+    @staticmethod
+    def file_get_contents(file):
         try:
             with open(file) as f:
                 return [line.strip() for line in f]
