@@ -1,27 +1,17 @@
-from urllib2 import Request, urlopen, URLError, HTTPError
-from httplib import BadStatusLine, IncompleteRead
+import requests
+
 
 class NetSpyPy:
 
     @staticmethod
-    def scrape(url, user_agent):
+    def scrape(url, user_agent, timeout=10):
         result = None
-        headers = {'User-Agent': user_agent}
-        request = Request(url, None, headers)
 
         try:
-            urlfile = urlopen(request)
-            result = urlfile.read()
-            urlfile.close()
-        except HTTPError, e:
-            print e.code
-        except URLError, e:
-            print e.reason
-        except BadStatusLine, e:
-            print e
-        except IncompleteRead, e:
-            print e
-        except IOError, e:
+            response = requests.get(url, headers={'User-Agent': user_agent}, timeout=timeout)
+            if response.status_code == requests.codes.ok:
+                result = response.text
+        except Exception, e:
             print e
 
         return result
