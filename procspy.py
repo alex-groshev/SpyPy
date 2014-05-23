@@ -42,12 +42,12 @@ class ProcSpyPy:
 
         # Getting description meta tag
         description = soup.find('meta', {"name": "description"})
-        description = description['content'] if description is not None and description['content'] is not None else ''
+        description = description['content'] if description is not None and description.has_key('content') else ''
         description = description.encode('utf-8')
         
         # Getting keywords meta tag
         keywords = soup.find('meta', {"name": "keywords"})
-        if keywords is not None and keywords['content'] is not None:
+        if keywords is not None and keywords.has_key('content'):
             keywords = keywords['content'].split(',')
             keywords = [keyword.strip().encode('utf-8') for keyword in keywords]
         else:
