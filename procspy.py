@@ -30,10 +30,10 @@ class ProcSpyPy:
         url = self.prepare_url(url)
         content = self.get_content(url)
 
-        if not content:
+        if content is None:
             return None
 
-        soup = BeautifulSoup(content)
+        soup = BeautifulSoup(content.text)
 
         # Getting title
         title = ''
@@ -55,12 +55,12 @@ class ProcSpyPy:
 
         # Getting Google Analytics code
         regex = re.compile(self.google_analytics, re.S+re.I)
-        m = regex.search(content)
+        m = regex.search(content.text)
         google_analytics = m.group(1) if m else ''
 
         # Getting Google AdSense code
         regex = re.compile(self.google_adsense, re.S+re.I)
-        m = regex.search(content)
+        m = regex.search(content.text)
         google_adsense = m.group(1) if m else ''
 
         # Getting domain name from URL
@@ -69,6 +69,14 @@ class ProcSpyPy:
 
         # Getting IP address
         ip = socket.gethostbyname(domain)
+
+        # Getting data from headers
+        server = content.headers['server'] if 'server' in content.headers else ''
+        header_fields = {}
+        header_fields_values = ['x-powered-by', 'x-aspnet-version', 'x-aspnetmvc-version', 'set-cookie']
+        for field in header_fields_values:
+            if field in content.headers:
+                header_fields.update({field: content.headers[field]})
 
         doc = {
             'date': datetime.utcnow(),
@@ -80,6 +88,8 @@ class ProcSpyPy:
             'keywords': keywords,
             'analytics': google_analytics,
             'adsense': google_adsense,
+            'server': server,
+            'hfields': header_fields,
             'processed': 1
         }
 
@@ -138,6 +148,8 @@ class ProcSpyPy:
                         'keywords': doc['keywords'],
                         'analytics': doc['analytics'],
                         'adsense': doc['adsense'],
+                        'server': doc['server'],
+                        'hfields': doc['hfields'],
                         'processed': 1
                     }
                 }

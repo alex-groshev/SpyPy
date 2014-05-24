@@ -27,6 +27,8 @@ def main():
             'keywords': [],
             'analytics': '',
             'adsense': '',
+            'server': '',
+            'hfields': {},
             'processed': 0
         }
 
