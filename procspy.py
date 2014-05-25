@@ -33,7 +33,11 @@ class ProcSpyPy:
         if content is None:
             return None
 
-        soup = BeautifulSoup(content.text)
+        try:
+            soup = BeautifulSoup(content.text)
+        except ValueError, e:
+            print e
+            return None
 
         # Getting title
         title = ''
