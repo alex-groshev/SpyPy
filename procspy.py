@@ -2,6 +2,7 @@ import sys
 import re
 import random
 import socket
+import threading
 from datetime import datetime
 from BeautifulSoup import BeautifulSoup
 from urlparse import urlparse
@@ -17,18 +18,9 @@ class ProcSpyPy:
         self.google_adsense = google_adsense
         self.user_agents = IoSpyPy.file_get_contents('useragents.txt')
 
-    def get_random_item(self, list):
-        return random.choice(list)
-
-    def prepare_url(self, url):
-        return 'http://' + url if not url.startswith('http://') else url
-
-    def get_content(self, url):
-        return NetSpyPy.scrape(url, self.get_random_item(self.user_agents))
-
-    def process(self, url):
-        url = self.prepare_url(url)
-        content = self.get_content(url)
+    def prepare_document(self, url):
+        url = ProcSpyPy.__prepare_url(url)
+        content = self.__get_content(url)
 
         if content is None:
             return None
@@ -99,67 +91,88 @@ class ProcSpyPy:
 
         return doc
 
-    def process_urls(self, urls):
-        if len(urls) < 1:
-            print 'Please, specify URL(s)!'
+    def process_url(self, url):
+        if url is None:
+            print 'Please, specify URL!'
             sys.exit(1)
 
-        for url in urls:
-            doc = self.process(url)
+        doc = self.prepare_document(url)
+        if not doc:
+            doc = {'date': datetime.utcnow(), 'url': url, 'processed': 1, 'error': 1}
 
-            if not doc:
-                doc = {
+        print 'Inserting record: %s' % doc['url']
+        self.dataspypy.insert_record(doc)
+
+    def process_urls(self, urls):
+        for url in urls:
+            self.process_url(url)
+
+    def process_document(self, document):
+        if document is None:
+            print 'Please, specify record to process!'
+            sys.exit(1)
+
+        if 'domain' not in document:
+            return None
+
+        doc = self.prepare_document(document['domain'])
+
+        if not doc:
+            rec = {
+                '$set': {
                     'date': datetime.utcnow(),
-                    'url': url,
+                    'domain': document['domain'],
                     'processed': 1,
                     'error': 1
                 }
-
-            print 'Inserting record: %s' % doc['url']
-
-            self.dataspypy.insert_record(doc)
-
-        print 'Done'
-
-    def process_records(self, records):
-        if len(records) < 1:
-            print 'Please, specify records to process!'
-            sys.exit(1)
-
-        for record in records:
-            if 'domain' not in record:
-                continue
-
-            doc = self.process(record['domain'])
-
-            if not doc:
-                rec = {
-                    '$set': {
-                        'date': datetime.utcnow(),
-                        'domain': record['domain'],
-                        'processed': 1,
-                        'error': 1
-                    }
+            }
+        else:
+            rec = {
+                '$set': {
+                    'date': datetime.utcnow(),
+                    'ip': doc['ip'],
+                    'url': doc['url'],
+                    'title': doc['title'],
+                    'description': doc['description'],
+                    'keywords': doc['keywords'],
+                    'analytics': doc['analytics'],
+                    'adsense': doc['adsense'],
+                    'server': doc['server'],
+                    'hfields': doc['hfields'],
+                    'processed': 1
                 }
-            else:
-                rec = {
-                    '$set': {
-                        'date': datetime.utcnow(),
-                        'ip': doc['ip'],
-                        'url': doc['url'],
-                        'title': doc['title'],
-                        'description': doc['description'],
-                        'keywords': doc['keywords'],
-                        'analytics': doc['analytics'],
-                        'adsense': doc['adsense'],
-                        'server': doc['server'],
-                        'hfields': doc['hfields'],
-                        'processed': 1
-                    }
-                }
+            }
 
-            print 'Updating record: %s - %s' % (record['_id'], record['domain'])
+        print 'Updating record: %s - %s' % (document['_id'], document['domain'])
+        self.dataspypy.update_record({'_id': document['_id']}, rec)
 
-            self.dataspypy.update_record({'_id': record['_id']}, rec)
+    def process_documents(self, documents):
+        for document in documents:
+            self.process_document(document)
 
-        print 'Done'
+    @staticmethod
+    def __get_random_item(list):
+        return random.choice(list)
+
+    @staticmethod
+    def __prepare_url(url):
+        return 'http://' + url if not url.startswith('http://') else url
+
+    def __get_content(self, url):
+        return NetSpyPy.scrape(url, ProcSpyPy.__get_random_item(self.user_agents))
+
+
+class DocumentProcessor(threading.Thread):
+    def __init__(self, queue, procspypy):
+        threading.Thread.__init__(self)
+        self.queue = queue
+        self.procspypy = procspypy
+
+    def run(self):
+        while True:
+            record = self.queue.get()
+            try:
+                self.procspypy.process_document(record)
+            except Exception, e:
+                print e
+            self.queue.task_done()
