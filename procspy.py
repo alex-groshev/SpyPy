@@ -72,7 +72,8 @@ class ProcSpyPy:
         header_fields_values = ['x-powered-by', 'x-aspnet-version', 'x-aspnetmvc-version', 'set-cookie']
         for field in header_fields_values:
             if field in content.headers:
-                header_fields.update({field: content.headers[field]})
+                if ProcSpyPy.__is_utf8(content.headers[field]):
+                    header_fields.update({field: content.headers[field]})
 
         doc = {
             'date': datetime.utcnow(),
@@ -160,6 +161,14 @@ class ProcSpyPy:
 
     def __get_content(self, url):
         return NetSpyPy.scrape(url, ProcSpyPy.__get_random_item(self.user_agents))
+
+    @staticmethod
+    def __is_utf8(string):
+        try:
+            string.decode('utf8')
+            return True
+        except UnicodeDecodeError:
+            return False
 
 
 class DocumentProcessor(threading.Thread):
