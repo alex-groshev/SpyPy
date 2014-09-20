@@ -21,7 +21,7 @@ def main():
     procspypy = ProcSpyPy(dataspypy, configs['google_analytics'], configs['google_adsense'])
     queue = Queue.Queue()
 
-    for i in range(4):
+    for i in range(configs['threads']):
         dp = DocumentProcessor(queue, procspypy)
         dp.setDaemon(True)
         dp.start()
