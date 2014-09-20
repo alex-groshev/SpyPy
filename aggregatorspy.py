@@ -12,7 +12,7 @@ def main():
     start = time.time()
 
     if len(sys.argv) < 2:
-        print 'Please, specify a number of records to process!'
+        print 'Please, specify a number of records to process and regular expression (optional)!'
         sys.exit(1)
 
     configs = ConfSpyPy.load('spypy.cfg')
@@ -26,7 +26,7 @@ def main():
         dp.setDaemon(True)
         dp.start()
 
-    records = dataspypy.get_unprocessed_records(int(sys.argv[1]))
+    records = dataspypy.get_unprocessed_records(int(sys.argv[1]), sys.argv[2] if len(sys.argv) == 3 else None)
     for record in records:
         queue.put(record)
 

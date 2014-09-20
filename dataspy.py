@@ -20,8 +20,10 @@ class DataSpyPy:
         except:
             print 'Unexpected error:', sys.exc_info()[0], sys.exc_info()[1]
 
-    def get_unprocessed_records(self, limit):
+    def get_unprocessed_records(self, limit, regex=None):
         query = {'processed': 0, 'error': {'$exists': 0}}
+        if regex:
+            query['domain'] = {'$regex': regex}
         show = {'_id': 1, 'domain': 1}
 
         try:
