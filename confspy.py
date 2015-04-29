@@ -19,6 +19,9 @@ class ConfSpyPy:
         # Procspy
         threads = config.getint('Procspy', 'threads')
 
+        # RabbitMQ
+        rabbit_queue = config.get('RabbitMQ', 'queue')
+
         if not host or not port or not google_analytics or not google_adsense or not threads:
             print 'Please, specify all required parameters in %s!' % file
             sys.exit(1)
@@ -28,5 +31,6 @@ class ConfSpyPy:
             'port': port,
             'google_analytics': google_analytics,
             'google_adsense': google_adsense,
-            'threads': threads
+            'threads': threads,
+            'queue': rabbit_queue
         }
