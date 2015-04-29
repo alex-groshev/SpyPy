@@ -2,6 +2,7 @@
 
 import sys
 import pika
+from bson.json_util import dumps
 from confspy import ConfSpyPy
 from dataspy import DataSpyPy
 
@@ -20,7 +21,7 @@ def main():
     dataspypy = DataSpyPy(configs['host'], configs['port'])
     records = dataspypy.get_unprocessed_records(int(sys.argv[1]), sys.argv[2] if len(sys.argv) == 3 else None)
     for record in records:
-        channel.basic_publish(exchange='', routing_key=configs['queue'], body=str(record))
+        channel.basic_publish(exchange='', routing_key=configs['queue'], body=dumps(record))
 
     connection.close()
 
