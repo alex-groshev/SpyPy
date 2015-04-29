@@ -21,6 +21,7 @@ def main():
     dataspypy = DataSpyPy(configs['host'], configs['port'])
     records = dataspypy.get_unprocessed_records(int(sys.argv[1]), sys.argv[2] if len(sys.argv) == 3 else None)
     for record in records:
+        print 'Enqueuing %s' % record['domain']
         channel.basic_publish(exchange='', routing_key=configs['queue'], body=dumps(record))
 
     connection.close()
